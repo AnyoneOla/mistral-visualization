@@ -64,23 +64,23 @@ export default function RoPESandbox({ simData }) {
       
       {/* Description Panel */}
       <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "12px", borderLeft: "4px solid var(--query-color)" }}>
-        <h2 style={{ fontSize: "1.4rem", fontFamily: "Outfit", display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ fontSize: "1.4rem", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
           <RefreshCw className="w-6 h-6 text-sky-400 animate-spin-slow" />
           Step 4: Rotary Position Embeddings (RoPE)
         </h2>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.5", margin: 0 }}>
-          Unlike standard transformers which add absolute position vectors, Mistral 7B uses **Rotary Position Embeddings (RoPE)**. 
+          Unlike standard transformers which add absolute position vectors, Mistral 7B uses <strong>Rotary Position Embeddings (RoPE)</strong>. 
           RoPE splits the Query and Key vectors into 2D coordinate slices and rotates each pair by an angle proportional to the token's position in the text.
-          Because dot product captures vector alignment, rotating both vectors preserves their relative angle, letting self-attention depend naturally on **relative distance**.
+          Because dot product captures vector alignment, rotating both vectors preserves their relative angle, letting self-attention depend naturally on <strong>relative distance</strong>.
         </p>
       </div>
 
       {/* Main Interactive Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", alignItems: "start" }}>
+      <div className="responsive-grid">
         
         {/* Left: 2D Coordinate Rotation Circle */}
         <div className="glass-panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-          <h3 style={{ fontSize: "1.1rem", alignSelf: "flex-start", fontFamily: "Outfit", color: "white" }}>
+          <h3 style={{ fontSize: "1.1rem", alignSelf: "flex-start", fontFamily: "inherit", color: "var(--text-primary)" }}>
             2D Coordinate Rotation Plane
           </h3>
 
@@ -177,7 +177,7 @@ export default function RoPESandbox({ simData }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           
           <div className="glass-panel" style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "14px" }}>
-            <h3 style={{ fontSize: "1rem", fontFamily: "Outfit", color: "var(--query-color)" }}>Rotation Configuration</h3>
+            <h3 style={{ fontSize: "1rem", fontFamily: "inherit", color: "var(--query-color)" }}>Rotation Configuration</h3>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.8rem" }}>
               
@@ -239,14 +239,14 @@ export default function RoPESandbox({ simData }) {
 
           {/* Proof panel */}
           <div className="glass-panel" style={{ padding: "16px", borderColor: "var(--attention-glow)" }}>
-            <h3 style={{ fontSize: "1rem", fontFamily: "Outfit", color: "var(--attention-color)", display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
+            <h3 style={{ fontSize: "1rem", fontFamily: "inherit", color: "var(--attention-color)", display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
               Relative Angle Invariance Proof
             </h3>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.8rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "var(--text-secondary)" }}>Relative Distance (d = m - n):</span>
-                <strong style={{ color: "white" }}>{posM - posN}</strong>
+                <strong style={{ color: "var(--text-primary)" }}>{posM - posN}</strong>
               </div>
 
               <div style={{ fontFamily: "monospace", fontSize: "0.7rem", color: "var(--text-muted)", backgroundColor: "var(--bg-surface)", padding: "8px", borderRadius: "6px", border: "1px solid var(--border-color)" }}>
@@ -282,25 +282,25 @@ export default function RoPESandbox({ simData }) {
               </button>
 
               <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: "1.3", margin: 0 }}>
-                💡 Click the shift button! As both Query ($m$) and Key ($n$) positions increment, they rotate but their **relative angle** and **Rotated Dot Product** remain identical.
+                💡 Click the shift button! As both Query (m) and Key (n) positions increment, they rotate but their <strong>relative angle</strong> and <strong>Rotated Dot Product</strong> remain identical.
               </p>
             </div>
           </div>
 
           {/* Relative Distance Attention Decay Graph */}
           <div className="glass-panel" style={{ padding: "16px", borderColor: "rgba(34, 211, 238, 0.2)" }}>
-            <h3 style={{ fontSize: "1rem", marginBottom: "10px", fontFamily: "Outfit", color: "var(--query-color)" }}>
+            <h3 style={{ fontSize: "1rem", marginBottom: "10px", fontFamily: "inherit", color: "var(--query-color)" }}>
               Destructive Interference Decay Curve
             </h3>
             
             <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: "1.3", marginBottom: "8px" }}>
-              As relative distance $d$ increases, high frequency rotation components cause the average dot product to decay, prioritizing local context.
+              As relative distance increases, high frequency rotation components cause the average dot product to decay, prioritizing local context.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
               <svg width="240" height="110" style={{ backgroundColor: "var(--bg-surface)", borderRadius: "6px", border: "1px solid var(--border-color)", overflow: "visible" }}>
                 {/* Horizontal reference */}
-                <line x1="20" y1="55" x2="220" y2="55" stroke="rgba(255,255,255,0.06)" strokeWidth="1.5" />
+                <line x1="20" y1="55" x2="220" y2="55" stroke="var(--border-color)" strokeWidth="1.5" />
                 
                 {/* Ticks */}
                 {Array.from({ length: 6 }).map((_, dVal) => {

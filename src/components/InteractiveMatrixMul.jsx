@@ -90,7 +90,7 @@ export default function InteractiveMatrixMul({
   const explanation = getExplanation();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%", position: "relative", paddingBottom: "220px" }}>
       
       <div className="matrix-multiply-container">
         
@@ -106,7 +106,7 @@ export default function InteractiveMatrixMul({
             border: "1px solid var(--border-color)",
             padding: "8px",
             borderRadius: "8px",
-            backgroundColor: "rgba(0,0,0,0.2)"
+            backgroundColor: "var(--bg-surface)"
           }}>
             {leftMatrix.map((row, rIdx) => (
               <div key={`left-r-${rIdx}`} style={{ display: "flex", gap: "4px", alignItems: "center" }}>
@@ -131,7 +131,7 @@ export default function InteractiveMatrixMul({
                         backgroundColor: isHighlighted ? `hsla(${leftColor === "var(--query-color)" ? 190 : 272}, 95%, 50%, 0.15)` : "rgba(255,255,255,0.02)",
                         border: `1px solid ${isHighlighted ? leftColor : "var(--border-color)"}`,
                         borderRadius: "4px",
-                        color: isHighlighted ? "#white" : "var(--text-secondary)",
+                        color: isHighlighted ? "var(--text-primary)" : "var(--text-secondary)",
                         transition: "all 0.15s ease"
                       }}
                       title={`${leftLabel}[${rIdx}, ${cIdx}] = ${val}`}
@@ -160,7 +160,7 @@ export default function InteractiveMatrixMul({
             border: "1px solid var(--border-color)",
             padding: "8px",
             borderRadius: "8px",
-            backgroundColor: "rgba(0,0,0,0.2)"
+            backgroundColor: "var(--bg-surface)"
           }}>
             {rightVal.map((row, rIdx) => (
               <div key={`right-r-${rIdx}`} style={{ display: "flex", gap: "4px" }}>
@@ -178,9 +178,9 @@ export default function InteractiveMatrixMul({
                         fontSize: "0.65rem",
                         fontFamily: "monospace",
                         backgroundColor: isHighlighted ? `hsla(38, 95%, 55%, 0.12)` : "rgba(255,255,255,0.01)",
-                        border: `1px solid ${isHighlighted ? rightColor : "rgba(255,255,255,0.05)"}`,
+                        border: `1px solid ${isHighlighted ? rightColor : "var(--border-color)"}`,
                         borderRadius: "3px",
-                        color: isHighlighted ? "#fff" : "var(--text-muted)",
+                        color: isHighlighted ? "var(--text-primary)" : "var(--text-muted)",
                         transition: "all 0.15s ease"
                       }}
                       title={`${rightLabel}[${rIdx}, ${cIdx}] = ${val}`}
@@ -218,7 +218,7 @@ export default function InteractiveMatrixMul({
             border: "1px solid var(--border-color)",
             padding: "8px",
             borderRadius: "8px",
-            backgroundColor: "rgba(0,0,0,0.2)"
+            backgroundColor: "var(--bg-surface)"
           }}>
             {outputMatrix.map((row, rIdx) => (
               <div key={`out-r-${rIdx}`} style={{ display: "flex", gap: "4px" }}>
@@ -241,7 +241,7 @@ export default function InteractiveMatrixMul({
                         backgroundColor: isHovered ? outputColor : "rgba(255,255,255,0.03)",
                         border: `1px solid ${isHovered ? outputColor : "var(--border-color)"}`,
                         borderRadius: "4px",
-                        color: isHovered ? "var(--bg-deep)" : "white",
+                        color: isHovered ? "var(--bg-deep)" : "var(--text-primary)",
                         cursor: "crosshair",
                         boxShadow: isHovered ? `0 0 10px ${outputColor}` : "none",
                         transition: "all 0.15s ease"
@@ -258,66 +258,77 @@ export default function InteractiveMatrixMul({
 
       </div>
 
-      {/* DETAILED EQUATION / MATH POPUP */}
-      {hoveredCell && explanation && (
-        <div 
-          className="math-popover animate-glow" 
-          style={{ 
-            alignSelf: "center", 
-            width: "100%", 
-            maxWidth: "700px", 
-            border: `1px solid ${outputColor}`,
-            boxShadow: `0 0 12px ${outputColor}22`,
-            backgroundColor: "var(--bg-card)",
-            padding: "16px",
-            borderRadius: "10px",
-            fontSize: "0.8rem"
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px" }}>
-            <span style={{ fontWeight: "700", color: "white" }}>Dot Product Calculation</span>
-            <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontFamily: "monospace" }}>
-              {explanation.leftRowLabelStr} &times; {explanation.rightColLabelStr}
-            </span>
-          </div>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            
-            {/* Show equation */}
-            <div style={{ overflowX: "auto", paddingBottom: "4px" }}>
-              <code style={{ fontSize: "0.75rem", whiteSpace: "nowrap", color: "var(--text-secondary)" }}>
-                C[{hoveredCell.r},{hoveredCell.c}] = {explanation.sumStr}
-              </code>
+      {/* DETAILED EQUATION / MATH POPUP WRAPPER FOR HOVER STABILITY */}
+      <div style={{ 
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        height: "210px", 
+        display: "flex", 
+        flexDirection: "column", 
+        justifyContent: "center", 
+        width: "100%",
+        boxSizing: "border-box"
+      }}>
+        {hoveredCell && explanation ? (
+          <div 
+            className="math-popover animate-glow" 
+            style={{ 
+              alignSelf: "center", 
+              width: "100%", 
+              maxWidth: "700px", 
+              border: `1px solid ${outputColor}`,
+              boxShadow: `0 0 12px ${outputColor}22`,
+              backgroundColor: "var(--bg-card)",
+              padding: "14px 16px",
+              borderRadius: "10px",
+              fontSize: "0.8rem",
+              boxSizing: "border-box"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px" }}>
+              <span style={{ fontWeight: "700", color: "var(--text-primary)" }}>Dot Product Calculation</span>
+              <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                {explanation.leftRowLabelStr} &times; {explanation.rightColLabelStr}
+              </span>
             </div>
             
-            {/* Show value expansion */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 12px", fontSize: "0.7rem", color: "var(--text-muted)", backgroundColor: "var(--bg-surface)", padding: "8px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.03)" }}>
-              {explanation.products.map((p, idx) => (
-                <div key={`p-detail-${idx}`} style={{ display: "flex", gap: "4px" }}>
-                  <span style={{ color: leftColor }}>{p.lVal.toFixed(2)}</span>
-                  <span>&times;</span>
-                  <span style={{ color: rightColor }}>{p.rVal.toFixed(2)}</span>
-                  <span>=</span>
-                  <span style={{ color: "white", fontWeight: "500" }}>{p.prod.toFixed(3)}</span>
-                </div>
-              ))}
-            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              
+              {/* Show equation */}
+              <div style={{ overflowX: "auto", paddingBottom: "4px" }}>
+                <code style={{ fontSize: "0.75rem", whiteSpace: "nowrap", color: "var(--text-secondary)" }}>
+                  C[{hoveredCell.r},{hoveredCell.c}] = {explanation.sumStr}
+                </code>
+              </div>
+              
+              {/* Show value expansion */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 12px", fontSize: "0.7rem", color: "var(--text-muted)", backgroundColor: "var(--bg-surface)", padding: "6px 10px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.03)" }}>
+                {explanation.products.map((p, idx) => (
+                  <div key={`p-detail-${idx}`} style={{ display: "flex", gap: "4px" }}>
+                    <span style={{ color: leftColor }}>{p.lVal.toFixed(2)}</span>
+                    <span>&times;</span>
+                    <span style={{ color: rightColor }}>{p.rVal.toFixed(2)}</span>
+                    <span>=</span>
+                    <span style={{ color: "var(--text-primary)", fontWeight: "500" }}>{p.prod.toFixed(3)}</span>
+                  </div>
+                ))}
+              </div>
 
-            {/* Sum Result */}
-            <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "white", display: "flex", alignItems: "center", gap: "6px", marginTop: "4px" }}>
-              <span>Sum Result:</span>
-              <span style={{ color: outputColor, fontSize: "1.05rem", fontFamily: "monospace" }}>{explanation.finalSum}</span>
-            </div>
+              {/* Sum Result */}
+              <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                <span>Sum Result:</span>
+                <span style={{ color: outputColor, fontSize: "1.05rem", fontFamily: "monospace" }}>{explanation.finalSum}</span>
+              </div>
 
+            </div>
           </div>
-        </div>
-      )}
-      
-      {!hoveredCell && (
-        <div style={{ textAlign: "center", fontSize: "0.7rem", color: "var(--text-muted)", fontStyle: "italic", marginTop: "2px" }}>
-          💡 Hover over any cell in the output matrix to inspect the row-column dot product calculations.
-        </div>
-      )}
+        ) : (
+          <div style={{ textAlign: "center", fontSize: "0.75rem", color: "var(--text-muted)", fontStyle: "italic", padding: "20px 0" }}>
+            💡 Hover over any cell in the output matrix to inspect the row-column dot product calculations.
+          </div>
+        )}
+      </div>
 
     </div>
   );

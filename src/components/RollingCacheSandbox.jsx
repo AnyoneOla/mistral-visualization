@@ -28,7 +28,7 @@ export default function RollingCacheSandbox({
       
       {/* Overview Block */}
       <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "12px", borderLeft: "4px solid var(--value-color)" }}>
-        <h2 style={{ fontSize: "1.4rem", fontFamily: "Outfit", display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ fontSize: "1.4rem", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
           <Disc className="w-6 h-6 text-purple-400 animate-spin-slow" />
           Step 6: Rolling Buffer Key-Value Cache
         </h2>
@@ -39,11 +39,11 @@ export default function RollingCacheSandbox({
       </div>
 
       {/* Main Interactive Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: "24px", alignItems: "start" }}>
+      <div className="responsive-grid">
         
         {/* Left Side: Circular Buffer Visualizer */}
         <div className="glass-panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", position: "relative" }}>
-          <h3 style={{ fontSize: "1.1rem", alignSelf: "flex-start", fontFamily: "Outfit", color: "white" }}>
+          <h3 style={{ fontSize: "1.1rem", alignSelf: "flex-start", fontFamily: "inherit", color: "var(--text-primary)" }}>
             Circular KV Cache Ring (Size W = {windowSize})
           </h3>
           
@@ -128,7 +128,7 @@ export default function RollingCacheSandbox({
             }}>
               <Activity className="w-4 h-4 text-value-color animate-pulse-slow" style={{ marginBottom: "2px" }} />
               <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Slot Pointer</div>
-              <div style={{ fontSize: "1.0rem", fontWeight: "700", fontFamily: "Outfit", color: "var(--value-color)" }}>
+              <div style={{ fontSize: "1.0rem", fontWeight: "700", fontFamily: "inherit", color: "var(--value-color)" }}>
                 {simData.activeTokenIdx % windowSize}
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function RollingCacheSandbox({
           
           {/* Eviction Tracker */}
           <div className="glass-panel" style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "1rem", marginBottom: "12px", fontFamily: "Outfit", color: "var(--value-color)" }}>
+            <h3 style={{ fontSize: "1rem", marginBottom: "12px", fontFamily: "inherit", color: "var(--value-color)" }}>
               Circular Write Eviction Logger
             </h3>
             
@@ -246,7 +246,7 @@ export default function RollingCacheSandbox({
 
           {/* Cached Vectors Inspector */}
           <div className="glass-panel" style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "1rem", marginBottom: "12px", fontFamily: "Outfit", color: "var(--key-color)" }}>
+            <h3 style={{ fontSize: "1rem", marginBottom: "12px", fontFamily: "inherit", color: "var(--key-color)" }}>
               Active Slots KV cache
             </h3>
             
@@ -281,7 +281,7 @@ export default function RollingCacheSandbox({
                           <span style={{ color: "var(--key-color)", fontSize: "0.65rem", width: "12px", fontWeight: "700" }}>K:</span>
                           <div style={{ display: "flex", gap: "2px", flex: 1 }}>
                             {kVals.slice(0, 4).map((v, ki) => (
-                              <div key={`k-val-${idx}-${ki}`} style={{ flex: 1, padding: "2px 0", textAlign: "center", fontSize: "0.6rem", fontFamily: "monospace", backgroundColor: "rgba(251, 191, 36, 0.1)", border: "1px solid var(--key-color)", borderRadius: "3px", color: "white" }}>
+                              <div key={`k-val-${idx}-${ki}`} style={{ flex: 1, padding: "2px 0", textAlign: "center", fontSize: "0.6rem", fontFamily: "monospace", backgroundColor: "rgba(251, 191, 36, 0.1)", border: "1px solid var(--key-color)", borderRadius: "3px", color: "var(--text-primary)" }}>
                                 {v.toFixed(2)}
                               </div>
                             ))}
@@ -291,7 +291,7 @@ export default function RollingCacheSandbox({
                           <span style={{ color: "var(--value-color)", fontSize: "0.65rem", width: "12px", fontWeight: "700" }}>V:</span>
                           <div style={{ display: "flex", gap: "2px", flex: 1 }}>
                             {vVals.slice(0, 4).map((v, vi) => (
-                              <div key={`v-val-${idx}-${vi}`} style={{ flex: 1, padding: "2px 0", textAlign: "center", fontSize: "0.6rem", fontFamily: "monospace", backgroundColor: "rgba(167, 139, 250, 0.1)", border: "1px solid var(--value-color)", borderRadius: "3px", color: "white" }}>
+                              <div key={`v-val-${idx}-${vi}`} style={{ flex: 1, padding: "2px 0", textAlign: "center", fontSize: "0.6rem", fontFamily: "monospace", backgroundColor: "rgba(167, 139, 250, 0.1)", border: "1px solid var(--value-color)", borderRadius: "3px", color: "var(--text-primary)" }}>
                                 {v.toFixed(2)}
                               </div>
                             ))}

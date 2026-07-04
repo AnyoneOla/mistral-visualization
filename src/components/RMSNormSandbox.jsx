@@ -32,23 +32,23 @@ export default function RMSNormSandbox({ simData }) {
       
       {/* Description Panel */}
       <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "12px", borderLeft: "4px solid var(--accent-color)" }}>
-        <h2 style={{ fontSize: "1.4rem", fontFamily: "Outfit", display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ fontSize: "1.4rem", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
           <Cpu className="w-6 h-6 text-teal-400 animate-pulse-slow" />
           Step 2: RMSNorm 1 & Dropout
         </h2>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.5", margin: 0 }}>
-          Mistral 7B normalizes activations prior to layers using **RMSNorm (Root Mean Square Normalization)**. 
+          Mistral 7B normalizes activations prior to layers using <strong>RMSNorm (Root Mean Square Normalization)</strong>. 
           Unlike standard LayerNorm which calculates both mean and variance, RMSNorm assumes a zero-mean activation vector and scales solely by the root-mean-square. 
-          This saves computational time. During training, a **Dropout** mask is optionally applied to regularize the network.
+          This saves computational time. During training, a <strong>Dropout</strong> mask is optionally applied to regularize the network.
         </p>
       </div>
 
       {/* Main Layout Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: "24px", alignItems: "start" }}>
+      <div className="responsive-grid">
         
         {/* Left Panel: RMSNorm Math Flow Chart */}
         <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <h3 style={{ fontSize: "1.1rem", fontFamily: "Outfit", color: "var(--query-color)" }}>
+          <h3 style={{ fontSize: "1.1rem", fontFamily: "inherit", color: "var(--query-color)" }}>
             RMSNorm Block Math Diagram
           </h3>
 
@@ -61,7 +61,7 @@ export default function RMSNormSandbox({ simData }) {
               </span>
               <div style={{ display: "flex", gap: "4px" }}>
                 {simData.embeddingLookup.outputVector.map((val, i) => (
-                  <div key={`rmsin-x-${i}`} style={{ flex: 1, padding: "8px 0", textAlign: "center", backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", borderRadius: "6px", fontFamily: "monospace", fontSize: "0.75rem" }}>
+                  <div key={`rmsin-x-${i}`} style={{ flex: 1, minWidth: 0, padding: "6px 0", textAlign: "center", backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", borderRadius: "6px", fontFamily: "monospace", fontSize: "0.68rem" }}>
                     {val.toFixed(2)}
                   </div>
                 ))}
@@ -83,7 +83,7 @@ export default function RMSNormSandbox({ simData }) {
               flexDirection: "column",
               gap: "6px"
             }}>
-              <div style={{ fontWeight: "700", color: "white" }}>Calculate RMS Scaling Factor:</div>
+              <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>Calculate RMS Scaling Factor:</div>
               <div style={{ fontSize: "0.75rem", fontFamily: "monospace", color: "var(--text-secondary)" }}>
                 RMS(x) = &radic;<span style={{ borderTop: "1px solid var(--text-secondary)" }}> (1/d) &Sigma; x<sub>i</sub><sup>2</sup> + &epsilon; </span>
               </div>
@@ -103,7 +103,7 @@ export default function RMSNormSandbox({ simData }) {
               </span>
               <div style={{ display: "flex", gap: "4px" }}>
                 {normalized.map((val, i) => (
-                  <div key={`rmsin-norm-${i}`} style={{ flex: 1, padding: "8px 0", textAlign: "center", backgroundColor: "var(--query-glow)", border: "1px solid var(--query-color)", color: "white", borderRadius: "6px", fontFamily: "monospace", fontSize: "0.75rem" }}>
+                  <div key={`rmsin-norm-${i}`} style={{ flex: 1, minWidth: 0, padding: "6px 0", fontSize: "0.68rem", textAlign: "center", backgroundColor: "var(--query-glow)", border: "1px solid var(--query-color)", color: "var(--text-primary)", borderRadius: "6px", fontFamily: "monospace" }}>
                     {val.toFixed(2)}
                   </div>
                 ))}
@@ -121,7 +121,7 @@ export default function RMSNormSandbox({ simData }) {
               </span>
               <div style={{ display: "flex", gap: "4px" }}>
                 {gamma.map((val, i) => (
-                  <div key={`rmsin-g-${i}`} style={{ flex: 1, padding: "8px 0", textAlign: "center", backgroundColor: "var(--key-glow)", border: "1px solid var(--key-color)", color: "white", borderRadius: "6px", fontFamily: "monospace", fontSize: "0.75rem" }}>
+                  <div key={`rmsin-g-${i}`} style={{ flex: 1, minWidth: 0, padding: "6px 0", fontSize: "0.68rem", textAlign: "center", backgroundColor: "var(--key-glow)", border: "1px solid var(--key-color)", color: "var(--text-primary)", borderRadius: "6px", fontFamily: "monospace" }}>
                     {val.toFixed(2)}
                   </div>
                 ))}
@@ -139,7 +139,7 @@ export default function RMSNormSandbox({ simData }) {
               </span>
               <div style={{ display: "flex", gap: "4px" }}>
                 {output.map((val, i) => (
-                  <div key={`rmsin-out-${i}`} style={{ flex: 1, padding: "8px 0", textAlign: "center", backgroundColor: "var(--success-glow)", border: "1px solid var(--success-color)", color: "white", borderRadius: "6px", fontFamily: "monospace", fontSize: "0.75rem", fontWeight: "700", boxShadow: "0 0 6px var(--success-glow)" }}>
+                  <div key={`rmsin-out-${i}`} style={{ flex: 1, minWidth: 0, padding: "6px 0", fontSize: "0.68rem", fontWeight: "700", textAlign: "center", backgroundColor: "var(--success-glow)", border: "1px solid var(--success-color)", color: "var(--text-primary)", borderRadius: "6px", fontFamily: "monospace", boxShadow: "0 0 6px var(--success-glow)" }}>
                     {val.toFixed(2)}
                   </div>
                 ))}
@@ -152,7 +152,7 @@ export default function RMSNormSandbox({ simData }) {
         {/* Right Panel: Interactive Dropout regularizer */}
         <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h3 style={{ fontSize: "1.1rem", fontFamily: "Outfit", color: "var(--attention-color)" }}>
+            <h3 style={{ fontSize: "1.1rem", fontFamily: "inherit", color: "var(--attention-color)" }}>
               Dropout Simulator
             </h3>
             
@@ -201,7 +201,7 @@ export default function RMSNormSandbox({ simData }) {
                     borderRadius: "6px",
                     border: "1px solid var(--border-color)",
                     backgroundColor: "var(--bg-surface)",
-                    color: "white",
+                    color: "var(--text-primary)",
                     fontSize: "0.75rem",
                     cursor: "pointer",
                     fontWeight: "600",
@@ -254,8 +254,8 @@ export default function RMSNormSandbox({ simData }) {
                   </div>
                 </div>
 
-                <p style={{ color: "var(--text-muted)", fontSize: "0.72rem", lineHeight: "1.4", margin: 0 }}>
-                  💡 **Inverted Dropout:** To keep expected values identical between training and inference, surviving activations are scaled up by $1 / (1-p)$. This removes the need to scale weights down during inference.
+                <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: "1.3", margin: 0 }}>
+                  💡 <strong>Inverted Dropout:</strong> To keep expected values identical between training and inference, surviving activations are scaled up by 1 / (1-p). This removes the need to scale weights down during inference.
                 </p>
               </>
             ) : (

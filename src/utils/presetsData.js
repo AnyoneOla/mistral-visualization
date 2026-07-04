@@ -1,418 +1,109 @@
 // Automatically generated presets data with 25 completion variants each
 export const PRESETS_DATA = [
   {
-    "title": "1. Grouped-Query Attention (GQA)",
-    "prompt": "Mistral 7B uses Grouped-Query Attention (GQA) to",
-    "description": "GQA groups query heads together to share key and value heads. This bridges the gap between fast Multi-Query Attention (MQA) and high-quality Multi-Head Attention (MHA).",
+    "title": "1. Simple Welcome Example",
+    "prompt": "Mistral is an AI that predicts the next",
+    "description": "A very simple example showing how a transformer generates text word by word in this dashboard.",
     "completions": [
       {
         "weight": 1,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          "."
-        ]
+        "words": [" word", " in", " this", " visual", " dashboard", " to", " show", " you", " how", " a", " transformer", " works", "."]
       },
       {
-        "weight": 0.9958517422299258,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " ."
-        ]
+        "weight": 0.99,
+        "words": [" token", " in", " this", " visual", " dashboard", " to", " show", " you", " how", " a", " transformer", " works", "."]
       },
       {
-        "weight": 0.9947463696797489,
-        "words": [
-          " pace",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          "."
-        ]
+        "weight": 0.98,
+        "words": [" text", " in", " this", " visual", " dashboard", " to", " show", " you", " how", " a", " transformer", " works", "."]
       },
       {
-        "weight": 0.9693233708733393,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " lower",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          "."
-        ]
+        "weight": 0.97,
+        "words": [" word", " in", " this", " interactive", " playground", " that", " shows", " how", " text", " is", " generated", "."]
       },
       {
-        "weight": 0.9678910322693416,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " decrease",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          "."
-        ]
+        "weight": 0.96,
+        "words": [" token", " in", " this", " interactive", " playground", " that", " shows", " how", " text", " is", " generated", "."]
       },
       {
-        "weight": 0.9534427057737908,
-        "words": [
-          " velocity",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " !"
-        ]
+        "weight": 0.95,
+        "words": [" text", " in", " this", " interactive", " playground", " that", " shows", " how", " text", " is", " generated", "."]
       },
       {
-        "weight": 0.9511395667481239,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " !"
-        ]
+        "weight": 0.94,
+        "words": [" word", " in", " this", " simple", " tutorial", " explaining", " the", " inner", " workings", " of", " attention", "."]
       },
       {
-        "weight": 0.9362658977036284,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " decrease",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " !"
-        ]
+        "weight": 0.93,
+        "words": [" token", " in", " this", " simple", " tutorial", " explaining", " the", " inner", " workings", " of", " attention", "."]
       },
       {
-        "weight": 0.9,
-        "words": [
-          " optimize",
-          " attention",
-          " computation",
-          " by",
-          " sharing",
-          " key",
-          " and",
-          " value",
-          " heads",
-          " efficiently",
-          "."
-        ]
+        "weight": 0.92,
+        "words": [" text", " in", " this", " simple", " tutorial", " explaining", " the", " inner", " workings", " of", " attention", "."]
       },
       {
-        "weight": 0.8990783833515731,
-        "words": [
-          " speed",
-          " up",
-          " inference",
-          " and",
-          " lower",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " ."
-        ]
+        "weight": 0.91,
+        "words": [" word", " in", " this", " interface", " to", " help", " you", " understand", " large", " language", " models", "."]
       },
       {
-        "weight": 0.8886457797088176,
-        "words": [
-          " velocity",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          "."
-        ]
+        "weight": 0.90,
+        "words": [" token", " in", " this", " interface", " to", " help", " you", " understand", " large", " language", " models", "."]
       },
       {
-        "weight": 0.8787814369833273,
-        "words": [
-          " velocity",
-          " up",
-          " inference",
-          " and",
-          " reduce",
-          " memory",
-          " bandwidth",
-          " during",
-          " token",
-          " generation",
-          " ."
-        ]
+        "weight": 0.89,
+        "words": [" word", " in", " a", " sentence", " by", " computing", " attention", " weights", " and", " projection", " layers", "."]
       },
       {
-        "weight": 0.8508136563880072,
-        "words": [
-          " optimize",
-          " attention",
-          " computation",
-          " by",
-          " sharing",
-          " key",
-          " and",
-          " value",
-          " heads",
-          " efficiently",
-          " ."
-        ]
+        "weight": 0.88,
+        "words": [" token", " in", " a", " sentence", " by", " computing", " attention", " weights", " and", " projection", " layers", "."]
       },
       {
-        "weight": 0.8,
-        "words": [
-          " decrease",
-          " the",
-          " size",
-          " of",
-          " the",
-          " KV",
-          " cache",
-          ",",
-          " allowing",
-          " larger",
-          " batch",
-          " sizes",
-          "."
-        ]
+        "weight": 0.87,
+        "words": [" word", " by", " processing", " input", " vectors", " through", " multi-head", " attention", " and", " MLP", " blocks", "."]
       },
       {
-        "weight": 0.7947019501945793,
-        "words": [
-          " decrease",
-          " the",
-          " size",
-          " of",
-          " the",
-          " KV",
-          " cache",
-          ",",
-          " allowing",
-          " larger",
-          " batch",
-          " sizes",
-          " !"
-        ]
+        "weight": 0.86,
+        "words": [" token", " by", " processing", " input", " vectors", " through", " multi-head", " attention", " and", " MLP", " blocks", "."]
       },
       {
-        "weight": 0.7657494980592242,
-        "words": [
-          " optimize",
-          " attention",
-          " computation",
-          " by",
-          " sharing",
-          " key",
-          " and",
-          " value",
-          " heads",
-          " efficiently",
-          " !"
-        ]
+        "weight": 0.85,
+        "words": [" word", " based", " on", " query", ",", " key", ",", " and", " value", " vector", " dot", " products", "."]
       },
       {
-        "weight": 0.6684746718154728,
-        "words": [
-          " decrease",
-          " the",
-          " size",
-          " of",
-          " the",
-          " KV",
-          " cache",
-          ",",
-          " allowing",
-          " larger",
-          " batch",
-          " sizes",
-          " ."
-        ]
+        "weight": 0.84,
+        "words": [" token", " based", " on", " query", ",", " key", ",", " and", " value", " vector", " dot", " products", "."]
       },
       {
-        "weight": 0.6,
-        "words": [
-          " accelerate",
-          " decoding",
-          " speed",
-          " significantly",
-          " without",
-          " sacrificing",
-          " model",
-          " performance",
-          " or",
-          " accuracy",
-          "."
-        ]
+        "weight": 0.83,
+        "words": [" word", " in", " this", " step-by-step", " walk-through", " of", " the", " transformer", " forward", " pass", "."]
       },
       {
-        "weight": 0.5933929493523092,
-        "words": [
-          " accelerate",
-          " decoding",
-          " pace",
-          " significantly",
-          " without",
-          " sacrificing",
-          " model",
-          " performance",
-          " or",
-          " accuracy",
-          "."
-        ]
+        "weight": 0.82,
+        "words": [" token", " in", " this", " step-by-step", " walk-through", " of", " the", " transformer", " forward", " pass", "."]
       },
       {
-        "weight": 0.5585569422440225,
-        "words": [
-          " accelerate",
-          " decoding",
-          " speed",
-          " significantly",
-          " without",
-          " sacrificing",
-          " model",
-          " performance",
-          " or",
-          " accuracy",
-          " ."
-        ]
+        "weight": 0.81,
+        "words": [" word", " in", " this", " UI", " to", " make", " learning", " deep", " learning", " concepts", " easy", "."]
       },
       {
-        "weight": 0.5164690923429883,
-        "words": [
-          " accelerate",
-          " decoding",
-          " speed",
-          " significantly",
-          " without",
-          " sacrificing",
-          " model",
-          " performance",
-          " or",
-          " accuracy",
-          " !"
-        ]
+        "weight": 0.80,
+        "words": [" token", " in", " this", " UI", " to", " make", " learning", " deep", " learning", " concepts", " easy", "."]
       },
       {
-        "weight": 0.4895443308451542,
-        "words": [
-          " accelerate",
-          " decoding",
-          " velocity",
-          " significantly",
-          " without",
-          " sacrificing",
-          " model",
-          " performance",
-          " or",
-          " accuracy",
-          "."
-        ]
+        "weight": 0.79,
+        "words": [" word", " in", " a", " sequence", " using", " GQA", ",", " RoPE", ",", " and", " SwiGLU", " FFN", " layers", "."]
       },
       {
-        "weight": 0.4,
-        "words": [
-          " solve",
-          " the",
-          " memory",
-          " bottleneck",
-          " that",
-          " plagues",
-          " traditional",
-          " multi",
-          " head",
-          " attention",
-          " designs",
-          "."
-        ]
+        "weight": 0.78,
+        "words": [" token", " in", " a", " sequence", " using", " GQA", ",", " RoPE", ",", " and", " SwiGLU", " FFN", " layers", "."]
       },
       {
-        "weight": 0.3818351429360572,
-        "words": [
-          " solve",
-          " the",
-          " memory",
-          " bottleneck",
-          " that",
-          " plagues",
-          " traditional",
-          " multi",
-          " head",
-          " attention",
-          " designs",
-          " !"
-        ]
+        "weight": 0.77,
+        "words": [" word", " to", " complete", " this", " sentence", " in", " a", " realistic", " demo", "."]
       },
       {
-        "weight": 0.3578602760314679,
-        "words": [
-          " solve",
-          " the",
-          " memory",
-          " bottleneck",
-          " that",
-          " plagues",
-          " traditional",
-          " multi",
-          " head",
-          " attention",
-          " designs",
-          " ."
-        ]
+        "weight": 0.76,
+        "words": [" token", " to", " complete", " this", " sentence", " in", " a", " realistic", " demo", "."]
       }
     ]
   },

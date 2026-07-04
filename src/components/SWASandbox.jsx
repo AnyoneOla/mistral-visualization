@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Cpu, Eye, Info } from "lucide-react";
 
-export default function SWASandbox({ simData }) {
-  const [windowSize, setWindowSize] = useState(4);
+export default function SWASandbox({ simData, windowSize, setWindowSize }) {
   const [hoveredCell, setHoveredCell] = useState(null); // {qIdx, kIdx}
   const [activeLayerToken, setActiveLayerToken] = useState(null);
 
@@ -73,25 +72,25 @@ export default function SWASandbox({ simData }) {
       
       {/* Description Panel */}
       <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "12px", borderLeft: "4px solid var(--attention-color)" }}>
-        <h2 style={{ fontSize: "1.4rem", fontFamily: "Outfit", display: "flex", alignItems: "center", gap: "10px" }}>
-          <Cpu className="w-6 h-6 text-pink-400 animate-pulse-slow" />
+        <h2 style={{ fontSize: "1.4rem", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "10px" }}>
+          <Cpu className="w-6 h-6 text-accent-color animate-pulse-slow" />
           Step 5: Sliding Window Self-Attention (SWA)
         </h2>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.5", margin: 0 }}>
-          Standard self-attention computes dot products for all tokens, scaling quadratically: $O(T^2)$. 
-          Mistral limits this using a **Sliding Window of size W** (e.g., W = 4096). A token at position $i$ only attends to positions $[i - W + 1, i]$. 
+          Standard self-attention computes dot products for all tokens, scaling quadratically: O(T²). 
+          Mistral limits this using a <strong>Sliding Window of size W</strong> (e.g., W = 4096). A token at position i only attends to positions [i &minus; W + 1, i]. 
           This results in a band-diagonal pattern in the attention matrix, saving computation.
         </p>
       </div>
 
       {/* Main Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "24px", alignItems: "start" }}>
+      <div className="responsive-grid">
         
         {/* Left: Attention Matrix Grid */}
-        <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "20px" }}>
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-            <h3 style={{ fontSize: "1.1rem", fontFamily: "Outfit", color: "white" }}>
+            <h3 style={{ fontSize: "1.1rem", fontFamily: "inherit", color: "var(--text-primary)" }}>
               Attention Weights Grid
             </h3>
             
@@ -111,98 +110,92 @@ export default function SWASandbox({ simData }) {
             </div>
           </div>
 
-          {/* Matrix canvas */}
-          <div style={{ overflowX: "auto" }}>
+
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+            {/* Tokens Row */}
             <div style={{ 
-              minWidth: "360px", 
-              padding: "16px", 
-              backgroundColor: "var(--bg-surface)", 
-              borderRadius: "12px", 
-              border: "1px solid var(--border-color)"
+              display: "grid", 
+              gridTemplateColumns: `80px repeat(${seqLen}, 1fr)`,
+              gap: "4px",
+              width: "100%",
+              boxSizing: "border-box"
             }}>
-              
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: `70px repeat(${seqLen}, 1fr)`,
-                gap: "3px"
-              }}>
-                {/* Empty corner */}
-                <div></div>
-                {/* Column Tokens (Keys) */}
-                {tokens.map((tok, idx) => (
-                  <div 
-                    key={`swa-col-${idx}`} 
-                    style={{ 
-                      fontSize: "0.65rem", 
-                      color: hoveredCell?.kIdx === idx ? "var(--key-color)" : "var(--text-muted)", 
-                      textAlign: "center", 
-                      textOverflow: "ellipsis", 
-                      overflow: "hidden", 
-                      whiteSpace: "nowrap",
-                      fontWeight: hoveredCell?.kIdx === idx ? "700" : "500"
-                    }}
-                  >
-                    {tok.text}
+              {/* Top-Left Empty spacer */}
+              <div></div>
+              {/* Columns Header (Key Tokens) */}
+              {tokens.map((tok, idx) => (
+                <div 
+                  key={`col-tok-${idx}`}
+                  style={{ 
+                    fontSize: "0.65rem", 
+                    color: hoveredCell?.kIdx === idx ? "var(--key-color)" : "var(--text-muted)", 
+                    textAlign: "center",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    fontWeight: hoveredCell?.kIdx === idx ? "700" : "500"
+                  }}
+                >
+                  {tok.text}
+                </div>
+              ))}
+
+              {/* Rows */}
+              {tokens.map((rowTok, qIdx) => (
+                <React.Fragment key={`swa-row-${qIdx}`}>
+                  {/* Row Token (Query) */}
+                  <div style={{ 
+                    fontSize: "0.65rem", 
+                    color: hoveredCell?.qIdx === qIdx ? "var(--query-color)" : "var(--text-muted)", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "flex-end", 
+                    paddingRight: "6px", 
+                    overflow: "hidden", 
+                    textOverflow: "ellipsis", 
+                    whiteSpace: "nowrap",
+                    fontWeight: hoveredCell?.qIdx === qIdx ? "700" : "500"
+                  }}>
+                    {rowTok.text}
                   </div>
-                ))}
 
-                {/* Rows */}
-                {tokens.map((rowTok, qIdx) => (
-                  <React.Fragment key={`swa-row-${qIdx}`}>
-                    {/* Row Token (Query) */}
-                    <div style={{ 
-                      fontSize: "0.65rem", 
-                      color: hoveredCell?.qIdx === qIdx ? "var(--query-color)" : "var(--text-muted)", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "flex-end", 
-                      paddingRight: "6px", 
-                      overflow: "hidden", 
-                      textOverflow: "ellipsis", 
-                      whiteSpace: "nowrap",
-                      fontWeight: hoveredCell?.qIdx === qIdx ? "700" : "500"
-                    }}>
-                      {rowTok.text}
-                    </div>
+                  {/* Cells */}
+                  {tokens.map((colTok, kIdx) => {
+                    const isCausalMask = kIdx > qIdx;
+                    const isSWAMask = kIdx < qIdx - windowSize + 1;
+                    const isMasked = isCausalMask || isSWAMask;
+                    const weight = getAttentionWeight(qIdx, kIdx);
+                    
+                    const cellColor = isMasked 
+                      ? "transparent" 
+                      : `hsla(18, 100%, 54%, ${0.05 + weight * 0.95})`;
 
-                    {/* Cells */}
-                    {tokens.map((colTok, kIdx) => {
-                      const isCausalMask = kIdx > qIdx;
-                      const isSWAMask = kIdx < qIdx - windowSize + 1;
-                      const isMasked = isCausalMask || isSWAMask;
-                      const weight = getAttentionWeight(qIdx, kIdx);
-                      
-                      const cellColor = isMasked 
-                        ? "transparent" 
-                        : `hsla(322, 90%, 60%, ${0.05 + weight * 0.95})`;
-
-                      return (
-                        <div
-                          key={`swa-cell-${qIdx}-${kIdx}`}
-                          className={`matrix-cell ${isMasked ? "masked" : ""}`}
-                          style={{
-                            backgroundColor: cellColor,
-                            border: isMasked ? "1px solid rgba(255,255,255,0.01)" : "1px solid rgba(255,255,255,0.07)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "0.6rem",
-                            color: "white",
-                            fontWeight: "700",
-                            aspectRatio: "1"
-                          }}
-                          onMouseEnter={() => setHoveredCell({ qIdx, kIdx })}
-                          onMouseLeave={() => setHoveredCell(null)}
-                        >
-                          {!isMasked && weight > 0.05 && weight.toFixed(2)}
-                        </div>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </div>
-
+                    return (
+                      <div
+                        key={`swa-cell-${qIdx}-${kIdx}`}
+                        className={`matrix-cell ${isMasked ? "masked" : ""}`}
+                        style={{
+                          backgroundColor: cellColor,
+                          border: isMasked ? "1px solid transparent" : "1px solid var(--border-color)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.6rem",
+                          color: "var(--text-primary)",
+                          fontWeight: "700",
+                          aspectRatio: "1"
+                        }}
+                        onMouseEnter={() => setHoveredCell({ qIdx, kIdx })}
+                        onMouseLeave={() => setHoveredCell(null)}
+                      >
+                        {!isMasked && weight > 0.05 && weight.toFixed(2)}
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
             </div>
+
           </div>
         </div>
 
@@ -210,75 +203,77 @@ export default function SWASandbox({ simData }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           
           {/* Causal and Window Masking Math Inspector */}
-          <div className="glass-panel" style={{ padding: "16px" }}>
-            <h3 style={{ fontSize: "1.0rem", marginBottom: "12px", fontFamily: "Outfit", color: "var(--attention-color)" }}>
+          <div className="glass-panel" style={{ padding: "20px", minHeight: "235px", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
+            <h3 style={{ fontSize: "1.0rem", marginBottom: "12px", fontFamily: "inherit", color: "var(--attention-color)" }}>
               Attention Score Masking Inspector
             </h3>
             
-            {hoveredCell ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.8rem" }}>
-                <div>
-                  <span style={{ color: "var(--text-secondary)" }}>Query Token (i = {hoveredCell.qIdx}):</span>{" "}
-                  <strong style={{ color: "var(--query-color)" }}>"{tokens[hoveredCell.qIdx]?.text}"</strong>
-                </div>
-                <div>
-                  <span style={{ color: "var(--text-secondary)" }}>Key Token (j = {hoveredCell.kIdx}):</span>{" "}
-                  <strong style={{ color: "var(--key-color)" }}>"{tokens[hoveredCell.kIdx]?.text}"</strong>
-                </div>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              {hoveredCell ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.8rem" }}>
+                  <div>
+                    <span style={{ color: "var(--text-secondary)" }}>Query Token (i = {hoveredCell.qIdx}):</span>{" "}
+                    <strong style={{ color: "var(--query-color)" }}>"{tokens[hoveredCell.qIdx]?.text}"</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "var(--text-secondary)" }}>Key Token (j = {hoveredCell.kIdx}):</span>{" "}
+                    <strong style={{ color: "var(--key-color)" }}>"{tokens[hoveredCell.kIdx]?.text}"</strong>
+                  </div>
 
-                {(() => {
-                  const isCausalMask = hoveredCell.kIdx > hoveredCell.qIdx;
-                  const isSWAMask = hoveredCell.kIdx < hoveredCell.qIdx - windowSize + 1;
-                  const isMasked = isCausalMask || isSWAMask;
-                  const rawScore = getRawScore(hoveredCell.qIdx, hoveredCell.kIdx);
-                  const maskVal = isCausalMask ? "-\u221E (future mask)" : isSWAMask ? "-\u221E (window limit)" : "0 (active)";
-                  const finalInput = isMasked ? "-\u221E" : rawScore;
-                  const prob = getAttentionWeight(hoveredCell.qIdx, hoveredCell.kIdx);
+                  {(() => {
+                    const isCausalMask = hoveredCell.kIdx > hoveredCell.qIdx;
+                    const isSWAMask = hoveredCell.kIdx < hoveredCell.qIdx - windowSize + 1;
+                    const isMasked = isCausalMask || isSWAMask;
+                    const rawScore = getRawScore(hoveredCell.qIdx, hoveredCell.kIdx);
+                    const maskVal = isCausalMask ? "-\u221E (future mask)" : isSWAMask ? "-\u221E (window limit)" : "0 (active)";
+                    const finalInput = isMasked ? "-\u221E" : rawScore;
+                    const prob = getAttentionWeight(hoveredCell.qIdx, hoveredCell.kIdx);
 
-                  const isActiveRow = hoveredCell.qIdx === seqLen - 1;
-                  const qVec = simData.gqa.qVectors[0] || [0.2, -0.5, 0.8, -0.1];
-                  const kVec = simData.gqa.kVectors[hoveredCell.kIdx]?.[0] || [0.3, 0.4, -0.1, 0.2];
+                    const isActiveRow = hoveredCell.qIdx === seqLen - 1;
+                    const qVec = simData.gqa.qVectors[0] || [0.2, -0.5, 0.8, -0.1];
+                    const kVec = simData.gqa.kVectors[hoveredCell.kIdx]?.[0] || [0.3, 0.4, -0.1, 0.2];
 
-                  return (
-                    <div style={{ 
-                      padding: "10px", 
-                      backgroundColor: "var(--bg-surface)", 
-                      borderRadius: "8px", 
-                      border: "1px solid var(--border-color)",
-                      fontFamily: "monospace",
-                      fontSize: "0.72rem",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px"
-                    }}>
-                      {isActiveRow && (
-                        <div style={{ borderBottom: "1px dashed rgba(255,255,255,0.05)", paddingBottom: "6px", marginBottom: "4px" }}>
-                          <div style={{ color: "var(--text-muted)", fontSize: "0.65rem", marginBottom: "2px" }}>Q &middot; K Vector dot product:</div>
-                          <div style={{ color: "white" }}>
-                            Dot = {qVec.map((qv, idx) => `(${qv.toFixed(2)}&times;${kVec[idx].toFixed(2)})`).join("+")} = <strong>{(qVec.reduce((s, qv, idx) => s + qv * kVec[idx], 0)).toFixed(3)}</strong>
+                    return (
+                      <div style={{ 
+                        padding: "8px 10px", 
+                        backgroundColor: "var(--bg-surface)", 
+                        borderRadius: "8px", 
+                        border: "1px solid var(--border-color)",
+                        fontFamily: "monospace",
+                        fontSize: "0.72rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px"
+                      }}>
+                        {isActiveRow && (
+                          <div style={{ borderBottom: "1px dashed var(--border-color)", paddingBottom: "4px", marginBottom: "2px" }}>
+                            <div style={{ color: "var(--text-muted)", fontSize: "0.65rem", marginBottom: "2px" }}>Q &middot; K Vector dot product:</div>
+                            <div style={{ color: "var(--text-primary)" }}>
+                              Dot = {qVec.map((qv, idx) => `(${qv.toFixed(2)}×${kVec[idx].toFixed(2)})`).join("+")} = <strong>{(qVec.reduce((s, qv, idx) => s + qv * kVec[idx], 0)).toFixed(3)}</strong>
+                            </div>
                           </div>
+                        )}
+                        <div>Score (Scaled): <strong>{rawScore}</strong></div>
+                        <div>Mask Offset M<sub>ij</sub>: <span style={{ color: isMasked ? "var(--attention-color)" : "var(--success-color)" }}>{maskVal}</span></div>
+                        <div>Input to Softmax (Score + M): <strong>{finalInput}</strong></div>
+                        <div style={{ fontWeight: "700", color: isMasked ? "var(--text-muted)" : "var(--success-color)", marginTop: "2px" }}>
+                          Attention Weight: {(prob * 100).toFixed(1)}%
                         </div>
-                      )}
-                      <div>Score (Scaled): <strong>{rawScore}</strong></div>
-                      <div>Mask Offset M<sub>ij</sub>: <span style={{ color: isMasked ? "var(--attention-color)" : "var(--success-color)" }}>{maskVal}</span></div>
-                      <div>Input to Softmax (Score + M): <strong>{finalInput}</strong></div>
-                      <div style={{ fontWeight: "700", color: isMasked ? "var(--text-muted)" : "var(--success-color)", marginTop: "4px" }}>
-                        Attention Weight: {(prob * 100).toFixed(1)}%
                       </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            ) : (
-              <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", fontStyle: "italic", margin: 0 }}>
-                Hover over grid cells to inspect mathematical masking operations.
-              </p>
-            )}
+                    );
+                  })()}
+                </div>
+              ) : (
+                <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", fontStyle: "italic", margin: 0, textAlign: "center" }}>
+                  💡 Hover over grid cells to inspect mathematical masking operations.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Layer Receptive Field Stack */}
-          <div className="glass-panel" style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-            <h3 style={{ fontSize: "1.0rem", fontFamily: "Outfit", color: "var(--success-color)" }}>
+          <div className="glass-panel" style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <h3 style={{ fontSize: "1.0rem", fontFamily: "inherit", color: "var(--success-color)" }}>
               Receptive Field Depth
             </h3>
             
@@ -336,7 +331,7 @@ export default function SWASandbox({ simData }) {
                                 ? "var(--query-color)" 
                                 : isVisible 
                                   ? "var(--success-color)" 
-                                  : "rgba(255,255,255,0.05)",
+                                  : "var(--border-color)",
                               boxShadow: isTarget 
                                 ? "0 0 4px var(--query-color)" 
                                 : isVisible 
@@ -354,7 +349,7 @@ export default function SWASandbox({ simData }) {
             </div>
 
             <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: "1.3", margin: 0 }}>
-              💡 Destructive stacked sliding windows allow tokens to look deep back. Across 32 stacked layers in Mistral, the effective receptive field grows to **131,072 tokens**!
+              💡 Destructive stacked sliding windows allow tokens to look deep back. Across 32 stacked layers in Mistral, the effective receptive field grows to <strong>131,072 tokens</strong>!
             </p>
           </div>
 

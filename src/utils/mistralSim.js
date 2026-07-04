@@ -246,19 +246,48 @@ export function simulateStep(presetIdx, generatedTokenStrings = [], windowSize =
     vVectors.push(vHeads);
   }
 
-  // 5. Grouped-Query Attention & Sliding Window Attention Masking
+  // 5. Apply Rotary Position Embeddings (RoPE) to Q and K Projections
+  const rotatedQVectors = qVectors.map((qVec) => {
+    const rotQ = [];
+    for (let pair = 0; pair < headDim / 2; pair++) {
+      const idx2 = pair * 2;
+      const angle = activeTokenIdx * (baseAngle / Math.pow(10, pair));
+      const [rx, ry] = rotate2D(qVec[idx2], qVec[idx2+1], angle);
+      rotQ.push(rx, ry);
+    }
+    return rotQ;
+  });
+
+  const rotatedKVectors = [];
+  for (let t = 0; t < seqLength; t++) {
+    const kHeadsRotated = [];
+    for (let kv = 0; kv < numKVHeads; kv++) {
+      const kVec = kVectors[t][kv];
+      const rotK = [];
+      for (let pair = 0; pair < headDim / 2; pair++) {
+        const idx2 = pair * 2;
+        const angle = t * (baseAngle / Math.pow(10, pair));
+        const [rx, ry] = rotate2D(kVec[idx2], kVec[idx2+1], angle);
+        rotK.push(rx, ry);
+      }
+      kHeadsRotated.push(rotK);
+    }
+    rotatedKVectors.push(kHeadsRotated);
+  }
+
+  // 6. Grouped-Query Attention & Sliding Window Attention Masking
   const attentionWeights = [];
   const rawScores = [];
   
   for (let q = 0; q < numQHeads; q++) {
     const kvIdx = Math.floor(q / qToKvRatio);
-    const qVec = qVectors[q];
+    const qVec = rotatedQVectors[q];
     
     const headRaw = [];
     let maxScore = -Infinity;
     
     for (let t = 0; t < seqLength; t++) {
-      const kVec = kVectors[t][kvIdx];
+      const kVec = rotatedKVectors[t][kvIdx];
       
       let dot = 0;
       for (let d = 0; d < headDim; d++) {
@@ -321,9 +350,10 @@ export function simulateStep(presetIdx, generatedTokenStrings = [], windowSize =
   const x_norm2 = norm2Data.output;
 
   // 9. MLP Block (SwiGLU FFN)
-  const W_gate = generateMatrix("W_gate_ffn", hiddenDim, hiddenDim, 0.7);
-  const W_up = generateMatrix("W_up_ffn", hiddenDim, hiddenDim, 0.7);
-  const W_down = generateMatrix("W_down_ffn", hiddenDim, hiddenDim, 0.7);
+  const intermediateDim = 12; // Mistral 7B expands intermediate dimension (~3.5x hidden size)
+  const W_gate = generateMatrix("W_gate_ffn", hiddenDim, intermediateDim, 0.7);
+  const W_up = generateMatrix("W_up_ffn", hiddenDim, intermediateDim, 0.7);
+  const W_down = generateMatrix("W_down_ffn", intermediateDim, hiddenDim, 0.7);
 
   const gateProj = vectorMatrixMul(x_norm2, W_gate);
   const upProj = vectorMatrixMul(x_norm2, W_up);

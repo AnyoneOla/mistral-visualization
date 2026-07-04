@@ -10,11 +10,13 @@ import {
   Flame,
   Play,
   Pause,
-  SkipForward,
-  RotateCcw,
+  ArrowRight,
   Sparkles,
   Sliders,
-  Brain
+  Brain,
+  Sun,
+  Moon,
+  ChevronDown
 } from "lucide-react";
 
 import Overview from "./components/Overview";
@@ -93,6 +95,63 @@ const sampleNextToken = (logitsData, temp, k, p) => {
 export default function App() {
   const [activeTab, setActiveTab] = useState("overview");
   
+  // Theme state
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  // Favicon dynamic rendering effect
+  useEffect(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext("2d");
+    
+    // Draw Mistral 3D logo facets
+    ctx.fillStyle = "#FF531A";
+    ctx.beginPath();
+    ctx.moveTo(2.5, 27.5);
+    ctx.lineTo(2.5, 6.25);
+    ctx.lineTo(8.75, 2.5);
+    ctx.lineTo(8.75, 23.75);
+    ctx.fill();
+    
+    ctx.fillStyle = "#E14614";
+    ctx.beginPath();
+    ctx.moveTo(8.75, 23.75);
+    ctx.lineTo(8.75, 2.5);
+    ctx.lineTo(16.25, 13.75);
+    ctx.lineTo(16.25, 28.75);
+    ctx.fill();
+    
+    ctx.fillStyle = "#FF531A";
+    ctx.beginPath();
+    ctx.moveTo(16.25, 28.75);
+    ctx.lineTo(16.25, 13.75);
+    ctx.lineTo(23.75, 2.5);
+    ctx.lineTo(23.75, 23.75);
+    ctx.fill();
+    
+    ctx.fillStyle = "#E14614";
+    ctx.beginPath();
+    ctx.moveTo(23.75, 23.75);
+    ctx.lineTo(23.75, 2.5);
+    ctx.lineTo(30, 6.25);
+    ctx.lineTo(30, 27.5);
+    ctx.fill();
+    
+    const link = document.querySelector("link[rel*='icon']") || document.createElement("link");
+    link.type = "image/x-icon";
+    link.rel = "shortcut icon";
+    link.href = canvas.toDataURL("image/x-icon");
+    document.getElementsByTagName("head")[0].appendChild(link);
+  }, []);
+
   // Simulation & Sampler States
   const [presetIdx, setPresetIdx] = useState(0);
   const [generatedTokens, setGeneratedTokens] = useState([]);
@@ -102,9 +161,10 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   // Playground presets
-  const windowSize = 4;
+  const [windowSize, setWindowSize] = useState(4);
+  const [attentionType, setAttentionType] = useState("GQA"); // MHA, GQA, MQA
   const numQHeads = 8;
-  const numKVHeads = 2;
+  const numKVHeads = attentionType === "MHA" ? 8 : attentionType === "MQA" ? 1 : 2;
 
   // Compute active simulation packet
   const simData = useMemo(() => {
@@ -202,192 +262,82 @@ export default function App() {
   }, [generatedTokens, presetIdx, isPlaying]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "var(--bg-deep)" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", backgroundColor: "var(--bg-deep)" }}>
       
       {/* Global Header & Controller Banner */}
       <header style={{
         backgroundColor: "var(--bg-surface)",
-        borderBottom: "1px solid var(--border-color)",
-        padding: "16px 40px",
+        borderBottom: "2px solid var(--border-color)",
+        padding: "12px 40px 10px 40px",
         position: "sticky",
         top: 0,
         zIndex: 100,
         display: "flex",
         flexDirection: "column",
-        gap: "16px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.5)"
+        gap: "8px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
       }}>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           
+          {/* Logo + Title block */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{
-              width: "32px",
-              height: "32px",
+            {/* Exact Mistral 3D block-style 'M' logo */}
+            <svg viewBox="0 0 128 128" width="22" height="22" style={{ overflow: "visible" }}>
+              <g>
+                <polygon points="10,110 10,25 35,10 35,95" fill="#FF531A" />
+                <polygon points="35,95 35,10 65,55 65,115" fill="#E14614" />
+                <polygon points="65,115 65,55 95,10 95,95" fill="#FF531A" />
+                <polygon points="95,95 95,10 120,25 120,110" fill="#E14614" />
+              </g>
+            </svg>
+            <div>
+              <h1 style={{ fontSize: "1rem", fontWeight: "700", fontFamily: "inherit", color: "var(--text-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+                Mistral 7B Explainer
+              </h1>
+            </div>
+          </div>
+
+          {/* Theme Mode Toggle (only) in top-right header */}
+          <button 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            style={{
+              padding: "6px 12px",
               borderRadius: "8px",
-              backgroundColor: "var(--accent-color)",
+              border: "1px solid var(--border-color)",
+              backgroundColor: "var(--bg-surface)",
+              color: "var(--text-secondary)",
+              fontSize: "0.7rem",
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 10px var(--accent-glow)"
-            }}>
-              <Flame className="w-4.5 h-4.5 text-white" />
-            </div>
-            <div>
-              <h1 style={{ fontSize: "1.1rem", fontWeight: "800", fontFamily: "Outfit", color: "var(--text-primary)" }}>
-                MISTRAL 7B EXPLAINER
-              </h1>
-              <div style={{ fontSize: "0.6rem", fontWeight: "600", color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                Autoregressive Layer Walkthrough
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Sampler Controllers in Header */}
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", backgroundColor: "var(--bg-card)", padding: "6px 16px", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: "600" }}>
-              <Sliders className="w-3.5 h-3.5 text-accent-color" />
-              <span>Sampler:</span>
-            </div>
-            
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem" }}>
-              <span style={{ color: "var(--text-muted)" }}>T:</span>
-              <span style={{ fontWeight: "700", color: "var(--success-color)", width: "30px" }}>{temperature.toFixed(1)}</span>
-              <input 
-                type="range" min="0.1" max="2.0" step="0.1" value={temperature} 
-                onChange={(e) => setTemperature(parseFloat(e.target.value))} 
-                style={{ width: "70px", height: "4px", accentColor: "var(--success-color)", cursor: "pointer" }}
-              />
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem" }}>
-              <span style={{ color: "var(--text-muted)" }}>K:</span>
-              <span style={{ fontWeight: "700", color: "var(--query-color)", width: "15px" }}>{topK}</span>
-              <input 
-                type="range" min="1" max="8" step="1" value={topK} 
-                onChange={(e) => setTopK(parseInt(e.target.value))} 
-                style={{ width: "60px", height: "4px", accentColor: "var(--query-color)", cursor: "pointer" }}
-              />
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem" }}>
-              <span style={{ color: "var(--text-muted)" }}>P:</span>
-              <span style={{ fontWeight: "700", color: "var(--attention-color)", width: "25px" }}>{topP.toFixed(1)}</span>
-              <input 
-                type="range" min="0.1" max="1.0" step="0.1" value={topP} 
-                onChange={(e) => setTopP(parseFloat(e.target.value))} 
-                style={{ width: "60px", height: "4px", accentColor: "var(--attention-color)", cursor: "pointer" }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: "500" }}>Preset Prompt:</span>
-            <select 
-              value={presetIdx} 
-              onChange={handlePresetChange}
-              style={{
-                padding: "8px 12px",
-                backgroundColor: "var(--bg-card)",
-                border: "1px solid var(--border-color)",
-                borderRadius: "6px",
-                color: "var(--text-primary)",
-                fontFamily: "inherit",
-                fontSize: "0.85rem",
-                minWidth: "200px",
-                outline: "none",
-                cursor: "pointer"
-              }}
-            >
-              {PRESETS.map((preset, idx) => (
-                <option key={idx} value={idx}>{preset.title}</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <button 
-              onClick={() => setIsPlaying(!isPlaying)}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "6px",
-                border: "none",
-                backgroundColor: isPlaying ? "hsla(0, 80%, 50%, 0.15)" : "var(--accent-color)",
-                color: isPlaying ? "hsl(0, 100%, 70%)" : "white",
-                fontWeight: "600",
-                fontSize: "0.8rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                cursor: "pointer",
-                transition: "all 0.2s ease"
-              }}
-            >
-              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              {isPlaying ? "Pause" : "Auto Generate"}
-            </button>
-            
-            <button 
-              onClick={handleStep}
-              disabled={!simData.hasMore}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "6px",
-                border: "1px solid var(--border-color)",
-                backgroundColor: "var(--bg-card)",
-                color: simData.hasMore ? "var(--text-primary)" : "var(--text-muted)",
-                fontSize: "0.8rem",
-                cursor: simData.hasMore ? "pointer" : "not-allowed",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s ease"
-              }}
-              title="Generate next token (Step)"
-            >
-              <SkipForward className="w-3.5 h-3.5" />
-            </button>
-
-            <button 
-              onClick={handleReset}
-              style={{
-                padding: "8px 12px",
-                borderRadius: "6px",
-                border: "1px solid var(--border-color)",
-                backgroundColor: "var(--bg-card)",
-                color: "var(--text-secondary)",
-                fontSize: "0.8rem",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s ease"
-              }}
-              title="Reset prompt"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </button>
-          </div>
+              transition: "all 0.15s ease"
+            }}
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+          </button>
         </div>
 
-        {/* Dynamic Token Sequence */}
+        {/* Dynamic Token Sequence - frozen in header */}
         <div style={{
-          backgroundColor: "hsl(224, 71%, 3%)",
+          backgroundColor: "var(--bg-surface)",
           border: "1px solid var(--border-color)",
           borderRadius: "8px",
-          padding: "10px 16px",
+          padding: "6px 12px",
           display: "flex",
           flexWrap: "wrap",
           gap: "6px",
           alignItems: "center"
         }}>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", marginRight: "8px" }}>
-            Generated Sequence:
+          <span style={{ fontSize: "0.6rem", color: "var(--text-secondary)", fontWeight: "700", textTransform: "uppercase", marginRight: "6px", letterSpacing: "0.05em", fontFamily: "monospace" }}>
+            GENERATED SEQUENCE:
           </span>
           {simData.promptTokens.map((t, idx) => (
             <span 
               key={`p-${idx}`} 
               className={`token-badge ${simData.activeTokenIdx === t.id ? "active" : ""}`}
-              style={{ padding: "4px 8px", fontSize: "0.8rem" }}
+              style={{ padding: "2px 5px", fontSize: "0.7rem" }}
             >
               {t.text}
             </span>
@@ -396,36 +346,181 @@ export default function App() {
             <span 
               key={`g-${idx}`} 
               className={`token-badge generated ${simData.activeTokenIdx === t.id ? "active" : ""}`}
-              style={{ padding: "4px 8px", fontSize: "0.8rem" }}
+              style={{ padding: "2px 5px", fontSize: "0.7rem" }}
             >
               {t.text}
             </span>
           ))}
           {isPlaying && simData.hasMore && (
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", animation: "pulse 1s infinite", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-              <Sparkles className="w-3 h-3 text-accent-color animate-spin-slow" /> predicting next...
+            <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", animation: "pulse 1.2s infinite", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <Sparkles className="w-3 h-3 text-cyan-600 animate-pulse" /> predicting...
             </span>
           )}
         </div>
       </header>
 
       {/* Main Grid Content */}
-      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", flex: 1 }} className="app-container">
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }} className="app-container">
         
         {/* Sidebar anchors */}
         <aside style={{
           backgroundColor: "var(--bg-surface)",
-          borderRight: "1px solid var(--border-color)",
-          padding: "24px 16px",
+          borderRight: "2px solid var(--border-color)",
+          padding: "20px 14px",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          height: "calc(100vh - 120px)",
-          position: "sticky",
-          top: "120px",
+          gap: "24px",
+          width: "280px",
+          flexShrink: 0,
           overflowY: "auto"
         }} className="sidebar">
-          
+
+          {/* CONTROL CONSOLE - Pinned in Sidebar */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", borderBottom: "1px solid var(--border-color)", paddingBottom: "20px" }}>
+            <div style={{ fontSize: "0.65rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Control Console
+            </div>
+
+            {/* Presets dropdown */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", fontWeight: "600" }}>Preset Prompt:</span>
+              <div style={{ position: "relative" }}>
+                <select 
+                  value={presetIdx} 
+                  onChange={handlePresetChange}
+                  style={{
+                    width: "100%",
+                    padding: "8px 30px 8px 10px",
+                    backgroundColor: "var(--bg-card)",
+                    border: "1px solid var(--border-color)",
+                    borderRadius: "8px",
+                    color: "var(--text-primary)",
+                    fontFamily: "inherit",
+                    fontSize: "0.75rem",
+                    outline: "none",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none"
+                  }}
+                >
+                  {PRESETS.map((preset, idx) => (
+                    <option key={idx} value={idx}>{preset.title}</option>
+                  ))}
+                </select>
+                <div style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--text-secondary)", display: "flex", alignItems: "center" }}>
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+              <button 
+                onClick={() => setIsPlaying(!isPlaying)}
+                style={{
+                  flex: "1 1 auto",
+                  padding: "8px 14px",
+                  borderRadius: "8px",
+                  border: "none",
+                  backgroundColor: isPlaying ? "var(--bg-surface)" : "var(--accent-color)",
+                  color: isPlaying ? "var(--accent-color)" : "white",
+                  fontWeight: "800",
+                  fontSize: "0.75rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease"
+                }}
+              >
+                {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+                <span>{isPlaying ? "Pause" : "Auto Gen"}</span>
+              </button>
+              
+              <button 
+                onClick={handleStep}
+                disabled={!simData.hasMore}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border-color)",
+                  backgroundColor: "var(--bg-card)",
+                  color: simData.hasMore ? "var(--text-primary)" : "var(--text-muted)",
+                  cursor: simData.hasMore ? "pointer" : "not-allowed",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.15s ease"
+                }}
+                title="Generate next token"
+              >
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+
+              <button 
+                onClick={handleReset}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border-color)",
+                  backgroundColor: "var(--bg-card)",
+                  color: "var(--text-secondary)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.15s ease"
+                }}
+                title="Reset generation"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Sliders */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "var(--bg-surface)", padding: "10px", border: "1px solid var(--border-color)", borderRadius: "8px" }}>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", fontWeight: "600", color: "var(--text-secondary)" }}>
+                  <span>Temp (T):</span>
+                  <span style={{ fontFamily: "monospace", color: "var(--accent-color)" }}>{temperature.toFixed(1)}</span>
+                </div>
+                <input 
+                  type="range" min="0.1" max="2.0" step="0.1" value={temperature} 
+                  onChange={(e) => setTemperature(parseFloat(e.target.value))} 
+                  className="custom-slider"
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", fontWeight: "600", color: "var(--text-secondary)" }}>
+                  <span>Top-K (K):</span>
+                  <span style={{ fontFamily: "monospace", color: "var(--key-color)" }}>{topK}</span>
+                </div>
+                <input 
+                  type="range" min="1" max="8" step="1" value={topK} 
+                  onChange={(e) => setTopK(parseInt(e.target.value))} 
+                  className="custom-slider"
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", fontWeight: "600", color: "var(--text-secondary)" }}>
+                  <span>Top-P (P):</span>
+                  <span style={{ fontFamily: "monospace", color: "var(--success-color)" }}>{topP.toFixed(1)}</span>
+                </div>
+                <input 
+                  type="range" min="0.1" max="1.0" step="0.1" value={topP} 
+                  onChange={(e) => setTopP(parseFloat(e.target.value))} 
+                  className="custom-slider"
+                />
+              </div>
+
+            </div>
+          </div>
+
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ fontSize: "0.65rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", paddingLeft: "8px" }}>
               Visual Flow Map
@@ -548,7 +643,7 @@ export default function App() {
         </aside>
 
         {/* Scrollable Canvas Viewport */}
-        <main style={{ padding: "40px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <main style={{ flex: 1, padding: "40px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px" }} className="content-pane">
           <div style={{ maxWidth: "1000px", margin: "0 auto", display: "flex", flexDirection: "column", width: "100%" }}>
             
           {/* 1. Overview */}
@@ -576,9 +671,13 @@ export default function App() {
           
           <FlowConnector />
 
-          {/* 4. Attention - Multi-Group QKV */}
+           {/* 4. Attention - Multi-Group QKV */}
           <div id="gqa" className="section-card fade-in-section">
-            <GQASandbox simData={simData} />
+            <GQASandbox 
+              simData={simData} 
+              attentionType={attentionType}
+              setAttentionType={setAttentionType}
+            />
           </div>
 
           <FlowConnector />
@@ -592,7 +691,11 @@ export default function App() {
 
           {/* 6. Sliding Window Attention */}
           <div id="swa" className="section-card fade-in-section">
-            <SWASandbox simData={simData} />
+            <SWASandbox 
+              simData={simData} 
+              windowSize={windowSize}
+              setWindowSize={setWindowSize}
+            />
           </div>
 
           <FlowConnector />
